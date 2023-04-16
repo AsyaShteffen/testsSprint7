@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 
-public class Praktikum {
+public class PraktikumTests {
     private final String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDAxOTE0YTI0OGQ0NTAwMzYyN2Y2MzEiLCJpYXQiOjE2ODE1NTQyODksImV4cCI6MTY4MjE1OTA4OX0.-qW0pQOBVqMkwOtHY5nI1OxdN9cHxJpEmvd9yuzlA58";
     // аннотация Before показывает, что метод будет выполняться перед каждым тестовым методом
     @Before
@@ -43,7 +43,7 @@ public class Praktikum {
                 // отправляем GET-запрос с помощью метода get, недостающую часть URL (ручку) передаём в него в качестве параметра
                 .get("/api/users/me")
                 // проверяем: что имя пользователя равно "Жак-Ив Кусто"
-                .then().assertThat().body("data.name", equalTo("Жак-Ив Кусто"));
+                .then().assertThat().body("data.name", equalTo("Василий Васильев"));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class Praktikum {
         Response response = given().auth().oauth2(token)
                 .get("/api/users/me");
         // проверяет, что в теле ответа ключу name соответствует нужное имя пользователя
-        response.then().assertThat().body("data.name", equalTo("Жак-Ив Кусто"));
+        response.then().assertThat().body("data.name", equalTo("Василий Васильев"));
         // выводит тело ответа на экран
         System.out.println(response.body().asString());
     }
