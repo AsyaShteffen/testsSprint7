@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.notNullValue;
@@ -68,7 +70,7 @@ public class Praktikum {
                 .then().statusCode(201);
     }
     @Test
-    public void createNewPlaceAndCheckResponse(){
+    public void createNewPlaceAndCheckResponse() {
         File json = new File("src/test/resources/newCard.json");
         Response response =
                 given()
@@ -81,5 +83,57 @@ public class Praktikum {
         response.then().assertThat().body("data._id", notNullValue())
                 .and()
                 .statusCode(201);
+    }
+    @Test
+    public void serializationTest(){
+        Card card = new Card("Интересное место", "https://code.s3.yandex.net/qa-automation-engineer/java/files/paid-track/sprint1/photoSelenide.jpg");
+        given()
+                .header("Content-type", "application/json")
+                .auth().oauth2(token)
+                .and()
+// сюда передали созданный обьект с нужными значениями полей
+                .body(card)
+                .when()
+                .post("/api/cards")
+                .then()
+                .statusCode(201);
+    }
+    @Test
+public void arraySerializationTest() {
+
+        List<Card> cards = new ArrayList<Card>();
+// добавили элементы
+        cards.add(new Card("Рио де Жанейро", "линк1"));
+        cards.add(new Card("Исилькуль", "линк2"));
+        cards.add(new Card("Уругвай", "линк3"));
+
+        given()
+                .header("Content-type", "application/json")
+                .auth().oauth2(token)
+                .and()
+// сюда передали созданный обьект с нужными значениями полей
+                .body(cards)
+                .when()
+                .post("/api/cards")
+                .then()
+                // бэк не умеет принимать массив, поэтому статус код 400
+                .statusCode(400);
+    }
+    @Test
+    public void createNewCard2() {
+        for (int i = 0; i < 10; i++) {
+            // формат %s-%d: s - аргумент Москва, d - переменная i
+            Card card = new Card(String.format("%s-%d", "Москва", i),
+                    "https://code.s3.yandex.net/qa-automation-engineer/java/files/paid-track/sprint1/photoSelenium.jpg"); // экземпляр класса Card со значениями полей
+
+            given()
+                    .header("Content-type", "application/json") // передача Content-type в заголовке для указания типа файла
+                    .auth().oauth2(token) // передача токена для аутентификации
+                    .and()
+                    .body(card) // передача объекта с данными
+                    .when()
+                    .post("/api/cards") // отправка POST-запроса
+                    .then().statusCode(201); // проверка кода ответа
+        }
     }
 }
